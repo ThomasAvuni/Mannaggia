@@ -10,13 +10,13 @@ Acubbo::Acubbo()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>("mimmo")
+	CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>("mimmo");
 	RootComponent = CubeMesh;
 	
-	CubeMesh -> SetSimulatePhysics(true)
-	CubeMesh -> SetCollisionProfileName()
-	CubeMesh -> SetCollisionResponseToChannel();
-	CubeMesh -> SetGenerateOverlapEvents(true)
+	CubeMesh->SetSimulatePhysics(true);
+	CubeMesh->SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
+	CubeMesh->SetCollisionResponseToChannel(ECC_Pawn,ECR_Overlap);
+	CubeMesh->SetGenerateOverlapEvents(true);
 }
 
 // Called when the game starts or when spawned
@@ -26,9 +26,5 @@ void Acubbo::BeginPlay()
 	
 }
 
-// Called every frame
-void Acubbo::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
+            
+                                           

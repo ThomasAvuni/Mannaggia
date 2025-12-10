@@ -4,27 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "cubbo.generated.h"
+#include "SpownCuboCadente.generated.h"
 
 UCLASS()
-class MANNAGGIA_API Acubbo : public AActor
+class MANNAGGIA_API ASpownCuboCadente : public AActor
 {
 	GENERATED_BODY()
-
+	// [X Y Z] - Acubbo
+	
 public:
 	// Sets default values for this actor's properties
-	Acubbo();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<class UStaticMeshComponent> CubeMesh;
-
-	int32 GetScoreValue() const {return ScoreValue;}
-
+	ASpownCuboCadente();
 	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	UPROPERTY(EditAnywhere, Category = "Points")
-	int32 ScoreValue = 10;
-}; 
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class Acubbo> pomelo;
+};
