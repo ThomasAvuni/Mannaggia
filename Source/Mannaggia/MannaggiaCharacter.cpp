@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MannaggiaCharacter.h"
+
+#include "CubeCollectorGameMode.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -11,6 +13,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Mannaggia.h"
+#include "Cubbi/CubboCheCade.h"
+#include "Kismet/GameplayStatics.h"
 
 AMannaggiaCharacter::AMannaggiaCharacter()
 {
@@ -45,9 +49,6 @@ AMannaggiaCharacter::AMannaggiaCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
 void AMannaggiaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -68,7 +69,28 @@ void AMannaggiaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 	else
 	{
-		UE_LOG(LogMannaggia, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void AMannaggiaCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMannaggiaCharacter::OnOverlapBegin);
+
+
+}
+
+void AMannaggiaCharacter::Prova()
+{
+}
+
+void AMannaggiaCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ICollectibleInterface* Cubbo = Cast<ICollectibleInterface>(OtherActor))
+	{
+		Cubbo->OnCollected(this);
 	}
 }
 
