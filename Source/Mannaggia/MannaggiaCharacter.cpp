@@ -11,6 +11,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Mannaggia.h"
+#include "Framework/CubeCollectorGamemode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Public/Cubbbi/Cubbbo.h"
 
 AMannaggiaCharacter::AMannaggiaCharacter()
 {
@@ -72,6 +75,22 @@ void AMannaggiaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 }
 
+void AMannaggiaCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ACubbbo*Cubbbbo=Cast<ACubbbo>(OtherActor))
+	{
+		if (ACubeCollectorGamemode* Gamemode = Cast<ACubeCollectorGamemode>(UGameplayStatics::GetGameMode(GetWorld())))
+		{
+			Gamemode->CubeCollected(Cubbbbo);
+		}
+			
+		if (SoundCollection)
+			UGameplayStatics::PlaySound2D(GetWorld(), SoundCollection, 0.7f);
+		Cubbbbo->Destroy();
+	}
+}
+
 void AMannaggiaCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -88,6 +107,12 @@ void AMannaggiaCharacter::Look(const FInputActionValue& Value)
 
 	// route the input
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
+}
+
+void AMannaggiaCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMannaggiaCharacter::OnOverlapBegin);
 }
 
 void AMannaggiaCharacter::DoMove(float Right, float Forward)
